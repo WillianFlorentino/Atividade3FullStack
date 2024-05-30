@@ -16,3 +16,5 @@ class AtividadeService {
         }
     }
 }
+
+export default AtividadeService;
