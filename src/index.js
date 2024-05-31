@@ -35,6 +35,11 @@ const router = createBrowserRouter(
         },
 
         {
+          path:'/AtivSustentaveis/:idAtividade',
+          element:<CadAtivSust></CadAtivSust>
+        },
+
+        {
           path:'/Beneficiarios',
           element:<Beneficiarios></Beneficiarios>
         },

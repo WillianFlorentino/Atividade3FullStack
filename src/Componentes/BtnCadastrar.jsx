@@ -2,10 +2,10 @@ import React from 'react';
 import { Button } from 'react-bootstrap';
 import { FaPlus, FaSave} from 'react-icons/fa';
 
-const BtnCadastrar = ({ editandoAtividade, handleCadastrar }) => {
+const BtnCadastrar = ({ editandoAtividade, handleSalvar }) => {
     return (
         <>
-            <Button className='btn w-100' variant='primary' onClick={handleCadastrar}>
+            <Button type='submit' className='btn w-100' variant='primary' onClick={handleSalvar}>
                 {editandoAtividade ? <><FaSave /> Salvar</> : <><FaPlus /> Cadastrar</>}
             </Button>
         </>
