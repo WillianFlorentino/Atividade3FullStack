@@ -71,6 +71,38 @@ class AtividadeService {
         }
     }
 
+    async excluir(idAtividade) {
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/atividade/${idAtividade}`, {
+                method: 'DELETE'
+            })
+    
+            if (!response.ok) {
+                console.log('Erro ao excluir!')
+                throw new Error('Erro ao excluir atividade...')
+            }
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async filtrar(termoBusca) {
+        const response = await fetch(`${API_BASE_URL}/atividade/filtrar/${termoBusca}`, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+
+        if (!response.ok) {
+            console.log('Ocorreu um erro ao editar a atividade');
+        }else{
+            const dados = await response.json();
+            return dados;
+        }
+    }
+    
+
 }
 
 export default AtividadeService;

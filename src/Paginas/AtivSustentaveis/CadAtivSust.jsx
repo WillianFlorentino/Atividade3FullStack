@@ -7,91 +7,117 @@ import AtividadeService from '../../services/AtividadeService';
 const atividadeService = new AtividadeService();
 
 function CadAtivSust() {
-    const [listaAtividades, setListaAtividades] = useState([]);
+    const [listaAtividades, setListaAtividades] = useState(null);
     const [sucessoMensagem, setSucessoMensagem] = useState('');
-    const [novaAtividade, setNovaAtividade] = useState('');
     const [editandoAtividade, setEditandoAtividade] = useState(null);
     const [erro, setErro] = useState('');
     const navigate = useNavigate();
-    const [validated,setValidated] =useState(false);
+    const [validated, setValidated] = useState(false);
     const [nome, setNome] = useState('');
     const [errors, setErrors] = useState({});
+    const [termoBusca, setTermoBusca] = useState('');
     const { idAtividade } = useParams();
 
-    const listarAtividades = async () => {
-        const dados = await atividadeService.obterTodos();
-        setListaAtividades(dados);
+    const handleBuscaChange = (event) => {
+        setTermoBusca(event.target.value);
+    };
+
+    const handleFiltrar = async () => {
+        await listarAtividades(termoBusca);
+    };
+
+    const listarAtividades = async (termoBusca) => {
+        let dados = [];
+        if (termoBusca) {
+            dados = await atividadeService.filtrar(termoBusca);
+            setListaAtividades(dados);
+        } else {
+            dados = await atividadeService.obterTodos();
+            setListaAtividades(dados);
+        }
+    };
+
+    const handleLimpar = () => {
+        setListaAtividades(null);
+        setTermoBusca('');
     };
 
     useEffect(() => {
-        listarAtividades();
-    }, []);
-
-    useEffect(() => {
-        const obterAtividade = async () => {
-            if (idAtividade) {
+        if (idAtividade) {
+            const obterAtividade = async () => {
                 const dados = await atividadeService.obterPorId(idAtividade);
                 setNome(dados.nome);
-            }
-        };
-        obterAtividade();
+            };
+            obterAtividade();
+        }
     }, [idAtividade]);
 
     const handleNomeChange = (e) => {
         const value = e.target.value;
         setNome(value);
-        if (value && value.length <= 100) {
-            setErrors((prev) => ({ ...prev, nome: null }));
-        } else {
-            if (value === '') {
-                setErrors((prev) => ({ ...prev, nome: 'O Nome não pode ser vazio.' }));
-            } else {
-                setErrors((prev) => ({ ...prev, nome: 'O Nome não pode ter mais de 100 caracteres.' }));
-            }
+        if (errors.nome && value.length >= 20) {
+            setErrors({});
         }
+    };
+
+    const validateNome = (value) => {
+        let error = '';
+        if (!value) {
+            error = 'O Nome não pode estar vazio.';
+        } else if (value.length < 20) {
+            error = 'O Nome deve ter no mínimo 20 caracteres.';
+        } else if (value.length > 100) {
+            error = 'O Nome não pode ter mais de 100 caracteres.';
+        }
+        return error;
     };
 
     async function handleSalvar(event) {
         event.preventDefault();
-        const form = event.currentTarget;
-        let newErrors = {};
+        const nomeError = validateNome(nome);
 
-        if (!nome) {
-            newErrors.nome = 'O Nome não pode estar vazio.';
-        } else if (nome.length > 100) {
-            newErrors.nome = 'O Nome não pode ter mais de 100 caracteres.';
+        if (nomeError) {
+            setErrors({ nome: nomeError });
+            return;
         }
 
-        if (Object.keys(newErrors).length > 0) {
-            setErrors(newErrors);
+        const atividade = {
+            id: idAtividade || 0,
+            nome: nome,
+        };
+
+        if (!idAtividade) {
+            await atividadeService.adicionar(atividade);
+            setSucessoMensagem('Atividade cadastrada com sucesso!');
         } else {
-            const atividade = {
-                id: idAtividade || 0, 
-                nome: nome,
-            };
-
-            if (!idAtividade) {
-                await atividadeService.adicionar(atividade);
-                setSucessoMensagem('Atividade cadastrada com sucesso!');
-            } else {
-                await atividadeService.atualizar(idAtividade, atividade);
-                setSucessoMensagem('Atividade atualizada com sucesso!');
-            }
-
-            setNome('');
-            setErrors({});
-            listarAtividades();
+            await atividadeService.atualizar(idAtividade, atividade);
+            setSucessoMensagem('Atividade atualizada com sucesso!');
         }
+
+        setNome('');
+        setErrors({});
+        setEditandoAtividade(null);
+        if (listaAtividades !== null) {
+            await listarAtividades(termoBusca);
+        }
+        setTimeout(() => {
+            setSucessoMensagem('');
+        }, 3000);
     }
 
     const handleExcluir = async (id) => {
         if (window.confirm('Tem certeza que deseja excluir?')) {
-            await atividadeService.delete(id);
+            await atividadeService.excluir(id);
+            setSucessoMensagem('Atividade excluída com sucesso!');
             await listarAtividades();
+            setTimeout(() => {
+                setSucessoMensagem('');
+            }, 3000);
         }
     };
+
     const handleEditar = (atividade) => {
-        setNovaAtividade(atividade.nomeAtivSust);
+        setNome(atividade.nome);
         setEditandoAtividade(atividade);
     };
 
@@ -116,17 +142,19 @@ function CadAtivSust() {
                                         <Form.Control
                                             className="border-secondary"
                                             type="text"
+                                            onChange={handleBuscaChange}
                                             placeholder="Pesquise o Nome da Atividade Sustentável"
+                                            value={termoBusca}
                                         />
                                     </Form.Group>
                                 </Col>
                                 <Col lg={2}>
-                                    <Button variant="secondary" className="w-100">
+                                    <Button variant="secondary" className="w-100" onClick={handleFiltrar}>
                                         <FaSearch /> Pesquisar
                                     </Button>
                                 </Col>
                                 <Col lg={2}>
-                                    <Button variant="secondary" className="w-100">
+                                    <Button variant="secondary" className="w-100" onClick={handleLimpar}>
                                         <FaBackspace /> Limpar
                                     </Button>
                                 </Col>
@@ -139,7 +167,7 @@ function CadAtivSust() {
                                         <Form.Group controlId="nome">
                                             <Form.Control
                                                 type="text"
-                                                className="border-secondary"
+                                                className={`border-secondary ${errors.nome ? 'is-invalid' : ''}`}
                                                 placeholder="Digite uma nova atividade..."
                                                 required
                                                 value={nome}
@@ -153,9 +181,10 @@ function CadAtivSust() {
                                     </Col>
                                     <Col lg={2}>
                                         <BtnCadastrar
-                                        editandoAtividade={editandoAtividade}
-                                        handleEditar={handleEditar}
-                                        handleCancelar={handleCancelar}/>
+                                            editandoAtividade={editandoAtividade}
+                                            handleEditar={handleEditar}
+                                            handleCancelar={handleCancelar}
+                                        />
                                     </Col>
                                     <Col lg={2}>
                                         {editandoAtividade && (
@@ -166,7 +195,9 @@ function CadAtivSust() {
                                     </Col>                                    
                                 </Row>
                                 <Col lg={10}>
-                                <Alert className="mt-3 text-center" variant="success" show={sucessoMensagem!==""}  > <b> <FaCheckCircle></FaCheckCircle> </b> {sucessoMensagem}</Alert>
+                                    <Alert className="mt-3 text-center" variant="success" show={sucessoMensagem !== ""}>
+                                        <b> <FaCheckCircle /> </b> {sucessoMensagem}
+                                    </Alert>
                                 </Col>
                             </Form>
                         </Card.Body>
@@ -177,37 +208,39 @@ function CadAtivSust() {
                     <Card>
                         <Card.Header as="h5">Atividades Cadastradas</Card.Header>
                         <Card.Body>
-                            <Table striped bordered hover>
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Nome da Atividade</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {listaAtividades.length <= 0 ? (
+                            {listaAtividades !== null && (
+                                <Table striped bordered hover>
+                                    <thead>
                                         <tr>
-                                            <td colSpan="3" className="text-center">Nenhum item para listar</td>
+                                            <th>ID</th>
+                                            <th>Nome da Atividade</th>
+                                            <th></th>
                                         </tr>
-                                    ) : (
-                                        listaAtividades.map((atividade) => (
-                                            <tr key={atividade.id}>
-                                                <td>{atividade.id}</td>
-                                                <td>{atividade.nome}</td>
-                                                <td>
-                                                    <Link to={`${atividade.id}`} className="btn btn-primary m-1" onClick={() => handleEditar(atividade)}>
-                                                        <FaEdit /> Editar
-                                                    </Link>
-                                                    <Button className="btn btn-danger" onClick={() => handleExcluir(atividade.id)}>
-                                                        <FaTrashAlt /> Excluir
-                                                    </Button>
-                                                </td>
+                                    </thead>
+                                    <tbody>
+                                        {listaAtividades.length <= 0 ? (
+                                            <tr>
+                                                <td colSpan="3" className="text-center">Nenhum item para listar</td>
                                             </tr>
-                                        ))
-                                    )}
-                                </tbody>
-                            </Table>
+                                        ) : (
+                                            listaAtividades.map((atividade) => (
+                                                <tr key={atividade.id}>
+                                                    <td>{atividade.id}</td>
+                                                    <td>{atividade.nome}</td>
+                                                    <td>
+                                                        <Link to={`${atividade.id}`} className="btn btn-primary m-1" onClick={() => handleEditar(atividade)}>
+                                                            <FaEdit /> Editar
+                                                        </Link>
+                                                        <Button className="btn btn-danger" onClick={() => handleExcluir(atividade.id)}>
+                                                            <FaTrashAlt /> Excluir
+                                                        </Button>
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        )}
+                                    </tbody>
+                                </Table>
+                            )}
                         </Card.Body>
                     </Card>
                 </Container>
