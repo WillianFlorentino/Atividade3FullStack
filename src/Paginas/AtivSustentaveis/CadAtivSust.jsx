@@ -96,6 +96,7 @@ function CadAtivSust() {
 
         setNome('');
         setErrors({});
+        navigate('/AtivSustentaveis'); 
         setEditandoAtividade(null);
         if (listaAtividades !== null) {
             await listarAtividades(termoBusca);
@@ -162,12 +163,12 @@ function CadAtivSust() {
                         </Card.Header>
                         <Card.Body>
                             <Form noValidate validated={validated} onSubmit={handleSalvar}>
-                                <Row className="align-items-center">
+                                <Row className="d-flex align-items-start">
                                     <Col lg={8}>
                                         <Form.Group controlId="nome">
                                             <Form.Control
                                                 type="text"
-                                                className={`border-secondary ${errors.nome ? 'is-invalid' : ''}`}
+                                                className={`${errors.nome ? 'is-invalid' : 'border-secondary'}`}
                                                 placeholder="Digite uma nova atividade..."
                                                 required
                                                 value={nome}
@@ -209,12 +210,13 @@ function CadAtivSust() {
                         <Card.Header as="h5">Atividades Cadastradas</Card.Header>
                         <Card.Body>
                             {listaAtividades !== null && (
-                                <Table striped bordered hover>
+                                <Table className='border-success mt-2'>
                                     <thead>
                                         <tr>
                                             <th>ID</th>
-                                            <th>Nome da Atividade</th>
-                                            <th></th>
+                                            <th colSpan={3}>Nome da Atividade</th>
+                                            <th colSpan={2} className='text-center'>Editar</th>
+                                            <th colSpan={2} className='text-center'>Excluir</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -226,14 +228,17 @@ function CadAtivSust() {
                                             listaAtividades.map((atividade) => (
                                                 <tr key={atividade.id}>
                                                     <td>{atividade.id}</td>
-                                                    <td>{atividade.nome}</td>
-                                                    <td>
-                                                        <Link to={`${atividade.id}`} className="btn btn-primary m-1" onClick={() => handleEditar(atividade)}>
-                                                            <FaEdit /> Editar
+                                                    <td colSpan={3}>{atividade.nome}</td>
+                                                    <td colSpan={2} className='text-center'>
+                                                        <Link to={`${atividade.id}`} className="btn-primary m-1" onClick={() => handleEditar(atividade)}>
+                                                            <FaEdit />
                                                         </Link>
-                                                        <Button className="btn btn-danger" onClick={() => handleExcluir(atividade.id)}>
-                                                            <FaTrashAlt /> Excluir
-                                                        </Button>
+                                                        
+                                                    </td>
+                                                    <td colSpan={2} className='text-center'>
+                                                        <Link className="text-danger text" onClick={() => handleExcluir(atividade.id)}>
+                                                            <FaTrashAlt />
+                                                        </Link>
                                                     </td>
                                                 </tr>
                                             ))
