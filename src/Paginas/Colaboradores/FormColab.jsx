@@ -1,53 +1,127 @@
-import { Button, Col, Form, Row, Container, Table, Alert } from 'react-bootstrap';
-import { FaCheckCircle, FaTrashAlt, FaListAlt } from 'react-icons/fa'
+import { Button, Col, Form, Row, Container, Table, Alert, FormLabel } from 'react-bootstrap';
+import { FaCheckCircle, FaTrash, FaListAlt, FaEdit, FaSearch } from 'react-icons/fa'
 import { useEffect, useState } from 'react';
+import { useParams, Link, useNavigate } from "react-router-dom";
+import moment from 'moment';
+
 
 import './formcolab.css'
+import ColaboradorService from '../../services/ColaboradorService';
 
+
+const colaboradorService = new ColaboradorService();
 
 function FormColab() {
-    const [showMensagem, setshowMensagem] = useState(false)
+    const [sucessoMensagem, setSucessoMensagem] = useState('')
     const [validated, setValidated] = useState(false);
-    const [descricao, setDescricao] = useState("");
+    const [id, setId] = useState("");
+    const [nome, setNome] = useState("");
     const [cpf, setCpf] = useState("");
-    const [numero, setNumero] = useState("");
+    const [contato, setContato] = useState("");
     const [dataNascimento, setDataNascimento] = useState("");
     const [endereco, setEndereco] = useState("");
     const [bairro, setBairro] = useState("");
-    const [numeroCasa, setNumeroCasa] = useState("");
+    const [numero, setNumero] = useState("");
     const [cargo, setCargo] = useState("");
-    const [anosExperiencia, setAnosExperiencia] = useState("");
+    const [email, setEmail] = useState("");
     const [nivelEscolaridade, setNivelEscolaridade] = useState("");
+    const { idColaborador } = useParams();
+    const navigate = useNavigate();
 
     const [errors, setErrors] = useState({});
 
     const [listaColaboradores, setListaColaboradores] = useState([]);
+    const [termoBusca, setTermoBusca] = useState("");
+    const handleBuscaChange = (event) => {
 
-    useEffect(() => {
-        const listaSalva = localStorage.getItem('colaborador');
-        if (listaSalva != null) {
-            setListaColaboradores(JSON.parse(listaSalva))
-        }
-
-    }, [])
-
-    const handleExcluir = (id) => {
-        const novosColaboradores = listaColaboradores.filter(colaborador => colaborador.id !== id);
-        setListaColaboradores(novosColaboradores);
-        localStorage.setItem('colaborador', JSON.stringify(novosColaboradores))
+        setTermoBusca(event.target.value)
     }
 
-    const hadleDescricaoChange = (e) => {
+    const handleFiltrar = async () => {
+        await listarColaboradores(termoBusca)
+    }
+
+    const formatarData = (data) => {
+        return moment(data).format('DD/MM/YYYY');
+    };
+
+
+    const listarColaboradores = async (termoBusca) => {
+        let dados = [];
+        if (termoBusca) {
+            dados = await colaboradorService.filtrar(termoBusca);
+            setListaColaboradores(dados);
+        } else {
+            dados = await colaboradorService.obterTodos();
+            setListaColaboradores(dados);
+        }
+    }
+
+    const carregarColaboradores = async () => {
+        const dados = await colaboradorService.obterTodos();
+        setListaColaboradores(dados);
+    };
+
+    
+
+    useEffect(() => {
+        const obterColaborador = async () => {
+            const dados = await colaboradorService.obterPorId(idColaborador);
+            setId(dados.id);
+            setNome(dados.nome);
+            setCpf(dados.cpf);
+            setContato(dados.contato);
+            setDataNascimento(new Date(dados.dataNascimento).toISOString().slice(0, 10));
+            setEndereco(dados.endereco);
+            setBairro(dados.bairro);
+            setNumero(dados.numero);
+            setCargo(dados.cargo);
+            setNivelEscolaridade(dados.nivelEscolaridade);
+            setEmail(dados.email);
+        };
+
+        if (idColaborador !== undefined) {
+            obterColaborador();
+        } else {
+            setId("");
+            setNome("");
+            setCpf("");
+            setContato("");
+            setDataNascimento("");
+            setEndereco("");
+            setBairro("");
+            setNumero("");
+            setCargo("");
+            setNivelEscolaridade("");
+            setEmail("");
+        }
+
+        listarColaboradores();
+
+
+    }, [idColaborador]);
+
+    const handleExcluir = async (id) => {
+        if (window.confirm('Tem Certeza que Deseja Excluir o Colaborador?')) {
+            await colaboradorService.delete(id);
+            await listarColaboradores();
+        }
+    };
+
+
+
+
+    const hadleNomeChange = (e) => {
         const value = e.target.value;
-        setDescricao(value);
+        setNome(value);
         if (value && value.length <= 50) {
-            setErrors((prev) => ({ ...prev, descricao: null }));
+            setErrors((prev) => ({ ...prev, nome: null }));
         } else {
 
             if (value === "") {
-                setErrors((prev) => ({ ...prev, descricao: 'O campo não pode estar vazio.' }));
+                setErrors((prev) => ({ ...prev, nome: 'O campo não pode estar vazio.' }));
             } else {
-                setErrors((prev) => ({ ...prev, descricao: 'O campo não aceita mais de 50 caracteres.' }));
+                setErrors((prev) => ({ ...prev, nome: 'O campo não aceita mais de 50 caracteres.' }));
             }
 
         }
@@ -69,18 +143,18 @@ function FormColab() {
         }
     };
 
-    const handleNumeroChange = (e) => {
+    const handleContatoChange = (e) => {
         let value = e.target.value;
         value = value.replace(/\D/g, '');
         value = value.replace(/^(\d{2})(\d)/g, '($1) $2');
         value = value.replace(/(\d)(\d{4})$/, '$1-$2');
-        setNumero(value);
+        setContato(value);
         if (value && value.length < 15) {
-            setErrors((prev) => ({ ...prev, numero: 'O campo deve ter 11 números.' }));
+            setErrors((prev) => ({ ...prev, contato: 'O campo deve ter 11 números.' }));
         } else if (value.length > 15) {
-            setErrors((prev) => ({ ...prev, numero: 'O campo não aceita mais de 11 números.' }));
+            setErrors((prev) => ({ ...prev, contato: 'O campo não aceita mais de 11 números.' }));
         } else {
-            setErrors((prev) => ({ ...prev, numero: null }));
+            setErrors((prev) => ({ ...prev, contato: null }));
         }
     };
 
@@ -116,17 +190,17 @@ function FormColab() {
         }
     };
 
-    const hadleNumeroCasaChange = (e) => {
+    const hadleNumeroChange = (e) => {
         const value = e.target.value;
-        setNumeroCasa(value);
+        setNumero(value);
         if (value && value.length <= 50) {
-            setErrors((prev) => ({ ...prev, numeroCasa: null }));
+            setErrors((prev) => ({ ...prev, numero: null }));
         } else {
 
             if (value === "") {
-                setErrors((prev) => ({ ...prev, numeroCasa: 'O campo não pode estar vazio.' }));
+                setErrors((prev) => ({ ...prev, numero: 'O campo não pode estar vazio.' }));
             } else {
-                setErrors((prev) => ({ ...prev, numeroCasa: 'O campo não aceita mais de 50 caracteres.' }));
+                setErrors((prev) => ({ ...prev, numero: 'O campo não aceita mais de 50 caracteres.' }));
             }
 
         }
@@ -155,9 +229,20 @@ function FormColab() {
     };
 
 
-    const handleAnosExperienciaChange = (event) => {
-        setAnosExperiencia(event.target.value);
+    const handleEmailChange = (e) => {
+        const value = e.target.value;
+        setEmail(value);
+        if (value && value.includes('@')) {
+            setErrors((prev) => ({ ...prev, email: null }));
+        } else {
+            if (value === "") {
+                setErrors((prev) => ({ ...prev, email: 'O campo não pode estar vazio.' }));
+            } else if (!value.includes('@')) {
+                setErrors((prev) => ({ ...prev, email: 'O campo deve conter um "@"' }));
+            }
+        }
     };
+
 
     const handleNivelEscolaridadeChange = (event) => {
         setNivelEscolaridade(event.target.value);
@@ -165,59 +250,65 @@ function FormColab() {
 
 
 
-    function handleSalvar(event) {
+    async function handleSalvar(event) {
         event.preventDefault();
         const form = event.currentTarget;
         let newErros = {};
-
+    
         if (form.checkValidity() === false) {
-            event.stopPropagation()
+            event.stopPropagation();
         }
-        if (!descricao) {
-            newErros.descricao = 'O campo não pode estar vazio.'
-        } else if (descricao.length > 50) {
-            newErros.descricao = 'O campo não aceita mais de 50 caracteres.'
+        if (!nome) {
+            newErros.nome = 'O campo não pode estar vazio.';
+        } else if (nome.length > 50) {
+            newErros.nome = 'O campo não aceita mais de 50 caracteres.';
         }
-
+    
         if (!endereco) {
-            newErros.endereco = 'O campo não pode estar vazio.'
+            newErros.endereco = 'O campo não pode estar vazio.';
         } else if (endereco.length > 50) {
-            newErros.endereco = 'O campo não aceita mais de 50 caracteres.'
+            newErros.endereco = 'O campo não aceita mais de 50 caracteres.';
         }
-
+    
         if (!bairro) {
-            newErros.bairro = 'O campo não pode estar vazio.'
+            newErros.bairro = 'O campo não pode estar vazio.';
         } else if (bairro.length > 50) {
-            newErros.bairro = 'O campo não aceita mais de 50 caracteres.'
+            newErros.bairro = 'O campo não aceita mais de 50 caracteres.';
         }
-
-        if (!numeroCasa) {
-            newErros.numeroCasa = 'O campo não pode estar vazio.'
-        } else if (numeroCasa.length > 6) {
-            newErros.numeroCasa = 'O campo não aceita mais de 5 digitos.'
-        }
-
-        if (!cpf) {
-            newErros.cpf = 'O campo não pode estar vazio.'
-        } else if (cpf.length > 14) {
-            newErros.cpf = 'O campo não aceita mais de 11 números.'
-        }
-
+    
         if (!numero) {
-            newErros.numero = 'O campo não pode estar vazio.'
-        } else if (numero.length > 15) {
-            newErros.numero = 'O campo não aceita mais de 11 números.'
+            newErros.numero = 'O campo não pode estar vazio.';
+        } else if (numero.length > 6) {
+            newErros.numero = 'O campo não aceita mais de 5 digitos.';
         }
-
+    
+        if (!cpf) {
+            newErros.cpf = 'O campo não pode estar vazio.';
+        } else if (cpf.length > 14) {
+            newErros.cpf = 'O campo não aceita mais de 11 números.';
+        }
+    
+        if (!contato) {
+            newErros.contato = 'O campo não pode estar vazio.';
+        } else if (contato.length > 15) {
+            newErros.contato = 'O campo não aceita mais de 11 números.';
+        }
+    
         if (!dataNascimento) {
-            newErros.dataNascimento = 'A data não pode ser vazia.'
+            newErros.dataNascimento = 'A data não pode ser vazia.';
         } else if (new Date(dataNascimento) > new Date()) {
-            newErros.dataNascimento = 'Não é permitido data futura.'
+            newErros.dataNascimento = 'Não é permitido data futura.';
         }
-
+    
+        if (!email) {
+            newErros.email = 'O campo não pode estar vazio.';
+        } else if (!email.includes('@')) {
+            newErros.email = 'O campo deve conter um "@"';
+        }
+    
         if (Object.keys(newErros).length > 0) {
-
-            setErrors(newErros)
+            setErrors(newErros);
+            setValidated(true);
         } else {
             const colaborador = {
                 id: 0,
@@ -229,333 +320,358 @@ function FormColab() {
                 numero: form.numero.value,
                 dataNascimento: form.dataNascimento.value,
                 cargo: cargo,
-                anosExperiencia: anosExperiencia,
-                nivelEscolaridade: nivelEscolaridade
-
-
+                nivelEscolaridade: nivelEscolaridade,
+                email: email,
             }
-
-            const listaSalva = localStorage.getItem('colaborador');
-            const colaboradores = listaSalva == null ? [] : JSON.parse(listaSalva);
-            colaborador.id = colaboradores.length + 1;
-            colaboradores.push(colaborador);
-            localStorage.setItem('colaborador', JSON.stringify(colaboradores))
-
-
-
-
-            setshowMensagem(true)
+    
+            if (idColaborador === undefined) {
+                await colaboradorService.adicionar(colaborador);
+                setSucessoMensagem('Colaborador Cadastrado com Sucesso!');
+                carregarColaboradores();
+            } else {
+                await colaboradorService.atualizar(idColaborador, colaborador);
+                setSucessoMensagem('Colaborador Atualizado com Sucesso!');
+                setValidated(false);
+            }
+    
+            form.reset(); 
+            setNome('');
+            setBairro('');
+            setEndereco('');
+            setCargo('');
+            setContato('');
+            setCpf('');
+            setNivelEscolaridade('');
+            setDataNascimento('');
+            setEmail('');
+            setNumero('');
+            setValidated(false);
+    
+            setTimeout(() => {
+                setSucessoMensagem('');
+                setErrors({});
+                navigate('/colaborador');
+            }, 3000);
         }
-
-        setValidated(true)
     }
+    
+
 
     return (
-        
-        
+
+
         <>
-        <Container className='form-colab'>
-            <h2 className="text-center mb-4"><FaListAlt /> CADASTRO DE COLABORADORES</h2>
-            <Col class="card borda">
-                <h5 class="card-header">Informações Pessoais</h5>
-                <hr /> { }
-                <Col class="card-body">
+            <Container className='form-colab'>
+                <h2 className="text-center mb-4"><FaListAlt /> CADASTRO DE COLABORADORES</h2>
+                <Col class="card borda">
+                    <h5 class="card-header">Informações Pessoais</h5>
+                    <hr /> { }
+                    <Col class="card-body">
 
-                    <Form noValidate validated={validated} onSubmit={handleSalvar}>
-                        <Row>
-                            <Col lg='1' className='mt-3'>
-                                <Form.Label>ID</Form.Label>
-                                <Col class="input-group mb-3">
-                                    <Form.Control type="text" class="form-control" placeholder="ID" aria-label="ID" aria-describedby="basic-addon2" disabled />
+                        <Form noValidate validated={validated} onSubmit={handleSalvar}>
+                            <Row>
+                                <Col lg='1' className='mt-3'>
+                                    <Form.Group controlId='id'>
+                                        <Form.Label>ID</Form.Label>
+                                        <Col class="input-group mb-3">
+                                            <Form.Control type="text" class="form-control" placeholder="ID" aria-label="ID" aria-describedby="basic-addon2" disabled value={id} />
+                                        </Col>
+                                    </Form.Group>
+                                </Col>
+
+                                <Col lg='3' className='mt-3'>
+                                    <Form.Group controlId='nome'>
+                                        <Form.Label>Nome</Form.Label>
+                                        <Col class="input-group mb-3">
+                                            <Form.Control type="text" class="form-control" placeholder="Nome do Colaborador" aria-label="Recipient's username" aria-describedby="basic-addon2"
+                                                required
+                                                value={nome}
+                                                isInvalid={!!errors.nome}
+                                                onChange={hadleNomeChange}
+                                                name="nome"
+                                            />
+                                            <Form.Control.Feedback type="invalid">
+                                                {errors.nome}
+                                            </Form.Control.Feedback>
+                                        </Col>
+                                    </Form.Group>
+                                </Col>
+                                <Col lg='3' className='mt-3'>
+                                    <Form.Group controlId='cpf'>
+                                        <Form.Label>CPF</Form.Label>
+                                        <Col className="input-group mb-3">
+                                            <Form.Control
+                                                type="text"
+                                                className="form-control"
+                                                placeholder="CPF do Colaborador"
+                                                aria-label="Recipient's username"
+                                                aria-describedby="basic-addon2"
+                                                required
+                                                value={cpf}
+                                                isInvalid={!!errors.cpf}
+                                                onChange={handleCpfChange}
+                                                name='cpf'
+                                            />
+                                            <Form.Control.Feedback type="invalid">
+                                                {errors.cpf}
+                                            </Form.Control.Feedback>
+                                        </Col>
+                                    </Form.Group>
+                                </Col>
+
+                                <Col lg='3' className='mt-3'>
+                                    <Form.Group controlId='contato'>
+                                        <Form.Label>Contato</Form.Label>
+                                        <Col className="input-group mb-3">
+                                            <Form.Control
+                                                type="text"
+                                                className="form-control"
+                                                placeholder="(XX) XXXXX-XXXX"
+                                                aria-label="Recipient's username"
+                                                aria-describedby="basic-addon2"
+                                                id="contact-input"
+                                                required
+                                                name='contato'
+                                                value={contato}
+                                                isInvalid={!!errors.contato}
+                                                onChange={handleContatoChange}
+                                            />
+                                            <Form.Control.Feedback type="invalid">
+                                                {errors.contato}
+                                            </Form.Control.Feedback>
+                                        </Col>
+                                    </Form.Group>
+                                </Col>
+                            </Row>
+
+                            <Row>
+                                <Col lg="4" className='mt-3'>
+                                    <Form.Group controlId='endereco'>
+                                        <Form.Label>Endereço</Form.Label>
+                                        <Col class="input-group mb-3">
+                                            <Form.Control type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon2"
+                                                required
+                                                name='endereco'
+                                                value={endereco}
+                                                isInvalid={!!errors.endereco}
+                                                onChange={hadleEnderecoChange}
+                                            />
+                                            <Form.Control.Feedback type="invalid">
+                                                {errors.endereco}
+                                            </Form.Control.Feedback>
+                                        </Col>
+                                    </Form.Group>
+                                </Col>
+
+                                <Col lg="3" className='mt-3'>
+                                    <Form.Group controlId='bairro'>
+                                        <Form.Label>Bairro</Form.Label>
+                                        <Col class="input-group mb-2">
+                                            <Form.Control type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon2"
+                                                required
+                                                value={bairro}
+                                                name='bairro'
+                                                isInvalid={!!errors.bairro}
+                                                onChange={hadleBairroChange}
+                                            />
+                                            <Form.Control.Feedback type="invalid">
+                                                {errors.bairro}
+                                            </Form.Control.Feedback>
+                                        </Col>
+                                    </Form.Group>
+                                </Col>
+
+                                <Col lg="2" className='mt-3'>
+                                    <Form.Group controlId='numero'>
+                                        <Form.Label>Número da Casa</Form.Label>
+                                        <Col class="input-group mb-3">
+                                            <Form.Control type="number" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon2"
+                                                required
+                                                value={numero}
+                                                name='numero'
+                                                isInvalid={!!errors.numero}
+                                                onChange={hadleNumeroChange}
+                                            />
+                                            <Form.Control.Feedback type="invalid">
+                                                {errors.numero}
+                                            </Form.Control.Feedback>
+                                        </Col>
+                                    </Form.Group>
+                                </Col>
+
+                                <Col lg="2" className='mt-3'>
+                                    <Form.Group controlId='dataNascimento'>
+                                        <Form.Label style={{ whiteSpace: 'nowrap' }}>Data de Nascimento</Form.Label>
+                                        <Col className="input-group mb-3">
+                                            <Form.Control type="date" className="form-control" aria-label="Data de Nascimento" aria-describedby="basic-addon2"
+                                                onChange={hadleDataNascimentoChange}
+                                                required
+                                                name='dataNascimento'
+                                                value={dataNascimento}
+                                                isInvalid={!!errors.dataNascimento}
+                                            />
+                                            <Form.Control.Feedback type="invalid">
+                                                {errors.dataNascimento}
+                                            </Form.Control.Feedback>
+                                        </Col>
+                                    </Form.Group>
+                                </Col>
+
+                            </Row>
+
+                            <hr /> { }
+                            <h5>Outras Informações</h5> { }
+
+                            <Row className='row' >
+                                <Col lg='3' className='mt-3'>
+                                    <Form.Group controlId='cargo'>
+                                        <Col class="input-group mb-3">
+                                            <Form.Label>Cargo</Form.Label>
+                                            <Form.Select required className="form-select"
+                                                onChange={handleCargoChange}
+                                                value={cargo}
+                                            >
+                                                <option value="">Selecione...</option>
+                                                <option value="Secretário">Secretário</option>
+                                                <option value="Acessor">Acessor</option>
+                                                <option value="Fiscal">Fiscal</option>
+                                                <option value="Auxíliar">Auxíliar</option>
+                                            </Form.Select>
+                                            <Form.Control.Feedback type="invalid">
+                                                Selecione um Cargo
+                                            </Form.Control.Feedback>
+                                        </Col>
+                                    </Form.Group>
+                                </Col>
+                                <Col lg='3'>
+                                    <Form.Group controlId='escolaridade'>
+                                        <Col className="mb-3 mt-4">
+                                            <Form.Label>Nível de Escolaridade</Form.Label>
+                                            <Form.Select required className="form-select"
+                                                onChange={handleNivelEscolaridadeChange}
+                                                value={nivelEscolaridade}
+                                            >
+                                                <option value="">Selecione...</option>
+                                                <option value="Ensino Fundamental">Ensino Fundamental</option>
+                                                <option value="Ensino Médio">Ensino Médio</option>
+                                                <option value="Ensino Técnico">Ensino Técnico</option>
+                                                <option value="Ensino Superior">Ensino Superior</option>
+                                                <option value="Pós-graduação">Pós-graduação</option>
+                                                <option value="Mestrado">Mestrado</option>
+                                                <option value="Doutorado">Doutorado</option>
+                                            </Form.Select>
+                                            <Form.Control.Feedback type="invalid">
+                                                Selecione um nível de Escolaridade
+                                            </Form.Control.Feedback>
+                                        </Col>
+                                    </Form.Group>
+                                </Col>
+
+                                <Col lg="3" className='mt-3'>
+                                    <Form.Group controlId='email'>
+                                        <Form.Label>E-mail</Form.Label>
+                                        <Col class="input-group mb-2">
+                                            <Form.Control type="email" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon2"
+                                                required
+                                                value={email}
+                                                name='email'
+                                                isInvalid={!!errors.email}
+                                                onChange={handleEmailChange}
+                                            />
+                                            <Form.Control.Feedback type="invalid">
+                                                {errors.email}
+                                            </Form.Control.Feedback>
+                                        </Col>
+                                    </Form.Group>
+                                </Col>
+                                <Alert className="alert-success-custom" variant='sucess' show={sucessoMensagem !== ""}> <b> <FaCheckCircle></FaCheckCircle> </b>{sucessoMensagem}</Alert>
+
+                            </Row>
+
+                            <hr /> { }
+
+
+                            <Col className='row justify-content-center'>
+                                <Col className='col-auto'>
+                                    <Button type="submit" variant='success m-1' className="btn btn-success btn-lg me-2" disabled={!!id}>Cadastrar</Button>
+                                    <Button type="submit" variant='warning m-1' className="btn btn-warning btn-lg me-2" disabled={!id}>Atualizar</Button>
                                 </Col>
                             </Col>
+                        </Form>
 
-                            <Col lg='3' className='mt-3'>
-                                <Form.Group controlId='nome'>
-                                    <Form.Label>Nome</Form.Label>
-                                    <Col class="input-group mb-3">
-                                        <Form.Control type="text" class="form-control" placeholder="Nome do Colaborador" aria-label="Recipient's username" aria-describedby="basic-addon2"
-                                            required
-                                            value={descricao}
-                                            isInvalid={!!errors.descricao}
-                                            onChange={hadleDescricaoChange}
-                                            name="nome"
-                                        />
-                                        <Form.Control.Feedback type="invalid">
-                                            {errors.descricao}
-                                        </Form.Control.Feedback>
-                                    </Col>
-                                </Form.Group>
-                            </Col>
-                            <Col lg='3' className='mt-3'>
-                                <Form.Group controlId='cpf'>
-                                    <Form.Label>CPF</Form.Label>
-                                    <Col className="input-group mb-3">
-                                        <Form.Control
-                                            type="text"
-                                            className="form-control"
-                                            placeholder="CPF do Colaborador"
-                                            aria-label="Recipient's username"
-                                            aria-describedby="basic-addon2"
-                                            required
-                                            value={cpf}
-                                            isInvalid={!!errors.cpf}
-                                            onChange={handleCpfChange}
-                                            name='cpf'
-                                        />
-                                        <Form.Control.Feedback type="invalid">
-                                            {errors.cpf}
-                                        </Form.Control.Feedback>
-                                    </Col>
-                                </Form.Group>
-                            </Col>
-
-                            <Col lg='3' className='mt-3'>
-                                <Form.Group controlId='contato'>
-                                    <Form.Label>Contato</Form.Label>
-                                    <Col className="input-group mb-3">
-                                        <Form.Control
-                                            type="text" 
-                                            className="form-control"
-                                            placeholder="(XX) XXXXX-XXXX"
-                                            aria-label="Recipient's username"
-                                            aria-describedby="basic-addon2"
-                                            id="contact-input"
-                                            required
-                                            name='contato'
-                                            value={numero}
-                                            isInvalid={!!errors.numero}
-                                            onChange={handleNumeroChange}
-                                        />
-                                        <Form.Control.Feedback type="invalid">
-                                            {errors.numero}
-                                        </Form.Control.Feedback>
-                                    </Col>
-                                </Form.Group>
-                            </Col>
-                        </Row>
-
-                        <Row>
-                            <Col lg="4" className='mt-3'>
-                                <Form.Group controlId='endereco'>
-                                    <Form.Label>Endereço</Form.Label>
-                                    <Col class="input-group mb-3">
-                                        <Form.Control type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon2"
-                                            required
-                                            name='endereco'
-                                            value={endereco}
-                                            isInvalid={!!errors.endereco}
-                                            onChange={hadleEnderecoChange}
-                                        />
-                                        <Form.Control.Feedback type="invalid">
-                                            {errors.endereco}
-                                        </Form.Control.Feedback>
-                                    </Col>
-                                </Form.Group>
-                            </Col>
-
-                            <Col lg="3" className='mt-3'>
-                                <Form.Group controlId='bairro'>
-                                    <Form.Label>Bairro</Form.Label>
-                                    <Col class="input-group mb-2">
-                                        <Form.Control type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon2"
-                                            required
-                                            value={bairro}
-                                            name='bairro'
-                                            isInvalid={!!errors.bairro}
-                                            onChange={hadleBairroChange}
-                                        />
-                                        <Form.Control.Feedback type="invalid">
-                                            {errors.bairro}
-                                        </Form.Control.Feedback>
-                                    </Col>
-                                </Form.Group>
-                            </Col>
-
-                            <Col lg="2" className='mt-3'>
-                                <Form.Group controlId='numero'>
-                                    <Form.Label>Número da Casa</Form.Label>
-                                    <Col class="input-group mb-3">
-                                        <Form.Control type="number" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon2"
-                                            required
-                                            value={numeroCasa}
-                                            name='numero'
-                                            isInvalid={!!errors.numeroCasa}
-                                            onChange={hadleNumeroCasaChange}
-                                        />
-                                        <Form.Control.Feedback type="invalid">
-                                            {errors.numeroCasa}
-                                        </Form.Control.Feedback>
-                                    </Col>
-                                </Form.Group>
-                            </Col>
-
-                            <Col lg="2" className='mt-3'>
-                                <Form.Group controlId='dataNascimento'>
-                                    <Form.Label style={{ whiteSpace: 'nowrap' }}>Data de Nascimento</Form.Label>
-                                    <Col className="input-group mb-3">
-                                        <Form.Control type="date" className="form-control" aria-label="Data de Nascimento" aria-describedby="basic-addon2"
-                                            onChange={hadleDataNascimentoChange}
-                                            required
-                                            name='dataNascimento'
-                                            value={dataNascimento}
-                                            isInvalid={!!errors.dataNascimento}
-                                        />
-                                        <Form.Control.Feedback type="invalid">
-                                            {errors.dataNascimento}
-                                        </Form.Control.Feedback>
-                                    </Col>
-                                </Form.Group>
-                            </Col>
-
-                        </Row>
-
-                        <hr /> { }
-                        <h5>Informações Profissionais</h5> { }
-
-                        <Row className='row' >
-                            <Col lg='3' className='mt-3'>
-                                <Form.Group controlId='cargo'>
-                                    <Col class="input-group mb-3">
-                                        <Form.Label>Cargo</Form.Label>
-                                        <Form.Select required className="form-select"
-                                            onChange={handleCargoChange}
-                                            value={cargo}
-                                        >
-                                            <option value="">Selecione...</option>
-                                            <option value="Secretário">Secretário</option>
-                                            <option value="Acessor">Acessor</option>
-                                            <option value="Fiscal">Fiscal</option>
-                                            <option value="Auxíliar">Auxíliar</option>
-                                        </Form.Select>
-                                        <Form.Control.Feedback type="invalid">
-                                            Selecione um Cargo
-                                        </Form.Control.Feedback>
-                                    </Col>
-                                </Form.Group>
-                            </Col>
-                            <Col lg='3' className=' mt-3'>
-                                <Form.Label>Descrição</Form.Label>
-                                <Col class="input-group mb-3">
-                                    <Form.Control required type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon2"
-                                    />
-                                    <Form.Control.Feedback type="invalid">
-                                        Preencha o Campo
-                                    </Form.Control.Feedback>
-                                </Col>
-                            </Col>
-                            <Col lg='2' className='mt-3'>
-                                <Form.Group controlId='anos'>
-                                    <Col class="input-group mb-3">
-                                        <Form.Label style={{ whiteSpace: 'nowrap' }}>Anos de Experiência</Form.Label>
-                                        <Form.Control type="number" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon2"
-                                            required
-                                            onChange={handleAnosExperienciaChange}
-                                            value={anosExperiencia}
-                                        />
-                                        <Form.Control.Feedback type="invalid">
-                                            Preencha o Campo
-                                        </Form.Control.Feedback>
-                                    </Col>
-                                </Form.Group>
-                            </Col>
-
-                        </Row>
-
-                        <hr /> { }
-
-                        <Row>
-                            <h5>Formação Acadêmica</h5> { }
-
-                            <Col lg='3'>
-                                <Form.Group controlId='escolaridade'>
-                                    <Col className="mb-3 mt-4">
-                                        <Form.Label>Nível de Escolaridade</Form.Label>
-                                        <Form.Select required className="form-select"
-                                            onChange={handleNivelEscolaridadeChange}
-                                            value={nivelEscolaridade}
-                                        >
-                                            <option value="">Selecione...</option>
-                                            <option value="Ensino Fundamental">Ensino Fundamental</option>
-                                            <option value="Ensino Médio">Ensino Médio</option>
-                                            <option value="Ensino Técnico">Ensino Técnico</option>
-                                            <option value="Ensino Superior">Ensino Superior</option>
-                                            <option value="Pós-graduação">Pós-graduação</option>
-                                            <option value="Mestrado">Mestrado</option>
-                                            <option value="Doutorado">Doutorado</option>
-                                        </Form.Select>
-                                        <Form.Control.Feedback type="invalid">
-                                            Selecione um nível de Escolaridade
-                                        </Form.Control.Feedback>
-                                    </Col>
-                                </Form.Group>
-                            </Col>
-                            <Alert className="alert-success-custom" variant='sucess' show={showMensagem}> <b> <FaCheckCircle></FaCheckCircle> </b>Colaborador Cadastrado com Sucesso!</Alert>
-                        </Row>
-
-
-                        <Col className='row justify-content-center'>
-                            <Col className='col-auto'>
-                                <Button type="submit" variant='sucess m-1' className="btn btn-success btn-lg me-2">Cadastrar</Button>
-                            </Col>
-                        </Col>
-                    </Form>
-
+                    </Col>
                 </Col>
-            </Col>
 
-            <Container className="custom-table-container mx-0">
-                <Table striped bordered hover className="table mt-5 custom-table">
-                    <thead>
-                        <tr>
-                            <th scope="col" className="w-5">ID</th>
-                            <th scope="col" className="w-15">Nome</th>
-                            <th scope="col" className="w-15">CPF</th>
-                            <th scope="col" className="w-20">Contato</th>
-                            <th scope="col" className="w-20">Endereço</th>
-                            <th scope="col" className="w-20">Bairro</th>
-                            <th scope="col">Número</th>
-                            <th scope="col">Data de Nascimento</th>
-                            <th scope="col">Cargo</th>
-                            <th scope="col">Experiência</th>
-                            <th scope="col">Escolaridade</th>
-                            <th scope="col">Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {listaColaboradores.length <= 0 ? (
-                            <tr>
-                                <td colSpan="13">Nenhum colaborador cadastrado</td>
-                            </tr>
-                        ) : (
-                            listaColaboradores.map((colaborador, index) => (
-                                <tr key={index} className={index % 2 === 0 ? 'dark-green' : 'light-green'}>
-                                    <td>{colaborador.id}</td>
-                                    <td>{colaborador.nome}</td>
-                                    <td>{colaborador.cpf}</td>
-                                    <td>{colaborador.contato}</td>
-                                    <td>{colaborador.endereco}</td>
-                                    <td>{colaborador.bairro}</td>
-                                    <td>{colaborador.numero}</td>
-                                    <td>{colaborador.dataNascimento}</td>
-                                    <td>{colaborador.cargo}</td>
-                                    <td>{colaborador.anosExperiencia}</td>
-                                    <td>{colaborador.nivelEscolaridade}</td>
-                                    <td>
-                                        <Button className='btn btn-danger btn-sm' onClick={() => handleExcluir(colaborador.id)} > <FaTrashAlt></FaTrashAlt>Excluir</Button>
-                                    </td>
+
+
+                <Container className="custom-table-container mx-0">
+                    <Col>
+                        <div className="mt-5 d-flex">
+                            <FormLabel className="pesquise-label">Pesquise</FormLabel>
+                            <Form.Control type="text" onChange={handleBuscaChange} placeholder="Pesquise o Colaborador" />
+                            <Button onClick={handleFiltrar} variant="secondary" className="mr-2"><FaSearch /></Button>
+                        </div>
+                    </Col>
+                    <div className="custom-table-container">
+                        <Table striped bordered hover className="table mt-5 custom-table">
+                            <thead>
+                                <tr>
+                                    <th scope="col" className="w-5">ID</th>
+                                    <th scope="col" className="w-15">Nome</th>
+                                    <th scope="col" className="w-10">CPF</th>
+                                    <th scope="col" className="w-15">Contato</th>
+                                    <th scope="col" className="w-15">Endereço</th>
+                                    <th scope="col" className="w-10">Bairro</th>
+                                    <th scope="col" className="w-10">Número</th>
+                                    <th scope="col" className="w-15">Data de Nascimento</th>
+                                    <th scope="col" className="w-10">Cargo</th>
+                                    <th scope="col" className="w-10">Escolaridade</th>
+                                    <th scope="col" className="w-15">E-mail</th>
+                                    <th scope="col" className="w-10">Ações</th>
                                 </tr>
-                            ))
-                        )}
-                    </tbody>
-                </Table>
+                            </thead>
+                            <tbody>
+                                {listaColaboradores.length <= 0 ? (
+                                    <tr>
+                                        <td colSpan="13">Nenhum colaborador cadastrado</td>
+                                    </tr>
+                                ) : (
+                                    listaColaboradores.map((colaborador, index) => (
+                                        <tr key={index} className={index % 2 === 0 ? 'dark-green' : 'light-green'}>
+                                            <td>{colaborador.id}</td>
+                                            <td>{colaborador.nome}</td>
+                                            <td>{colaborador.cpf}</td>
+                                            <td>{colaborador.contato}</td>
+                                            <td>{colaborador.endereco}</td>
+                                            <td>{colaborador.bairro}</td>
+                                            <td>{colaborador.numero}</td>
+                                            <td>{formatarData(colaborador.dataNascimento)}</td>
+                                            <td>{colaborador.cargo}</td>
+                                            <td>{colaborador.nivelEscolaridade}</td>
+                                            <td>{colaborador.email}</td>
+                                            <td>
+                                                <div className="d-flex align-items-center">
+                                                    <Link to={`/colaborador/${colaborador.id}`} className='text-primary fs-5'>
+                                                        <FaEdit />
+                                                    </Link>
+                                                    <Button variant="link" onClick={() => handleExcluir(colaborador.id)} className='text-danger fs-5'>
+                                                        <FaTrash />
+                                                    </Button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))
+                                )}
+                            </tbody>
+                        </Table>
+                    </div>
+                </Container>
             </Container>
-        </Container>
-        
+
         </>
 
-    
-        
+
+
 
     );
 }

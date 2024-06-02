@@ -10,9 +10,9 @@ function CadAtivSust() {
     const [listaAtividades, setListaAtividades] = useState(null);
     const [sucessoMensagem, setSucessoMensagem] = useState('');
     const [editandoAtividade, setEditandoAtividade] = useState(null);
-    const [erro, setErro] = useState('');
+    const [setErro] = useState('');
     const navigate = useNavigate();
-    const [validated, setValidated] = useState(false);
+    const [validated] = useState(false);
     const [nome, setNome] = useState('');
     const [errors, setErrors] = useState({});
     const [termoBusca, setTermoBusca] = useState('');

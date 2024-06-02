@@ -53,6 +53,10 @@
     font-style: italic;
 }
 
+.text-shadow {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
 .main-container {
     max-width: 97%;
     margin-left: 20px;

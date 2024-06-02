@@ -8,20 +8,33 @@
     color: #155724;
 }
 
+.custom-table-container {
+    margin-bottom: 20px;
+    width: 100%;
+    overflow-x: hidden; /* Evitar rolagem horizontal */
+}
+
 .custom-table {
     border: 1px solid black;
     border-collapse: collapse;
     width: 100%;
+    table-layout: auto; /* Permitir que a tabela ajuste automaticamente a largura das colunas */
 }
 
 .custom-table th, .custom-table td {
     border: 1px solid black;
-    padding: 8px;
+    padding: 4px; /* Reduzir padding */
     text-align: center;
+    white-space: nowrap; /* Evitar quebra de linha */
+    font-size: 0.85em; /* Reduzir tamanho da fonte */
 }
 
 .custom-table .w-5 {
     width: 5%;
+}
+
+.custom-table .w-10 {
+    width: 10%;
 }
 
 .custom-table .w-15 {
@@ -29,28 +42,32 @@
 }
 
 .custom-table .w-20 {
-    width: 25%; 
+    width: 20%;
 }
 
 .custom-table .dark-green {
-    background-color: #006400; 
-    color: #ffffff; 
+    background-color: #006400;
+    color: #ffffff;
 }
 
 .custom-table .light-green {
-    background-color: #90ee90; 
+    background-color: #90ee90;
 }
 
 .custom-table tr:nth-child(even) {
-    background-color: #90ee90; 
+    background-color: #90ee90;
 }
 
 .custom-table tr:nth-child(odd) {
-    background-color: #006400; 
+    background-color: #006400;
 }
 
-.custom-table-container {
-    margin-bottom: 20px; 
-    max-width: 90%;
-}
+
+
+
+  .pesquise-label {
+    font-weight: bold;
+    margin-right: 10px;
+    font-size: 1.7em; 
+  }
 

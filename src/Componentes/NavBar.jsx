@@ -24,7 +24,7 @@ function NavBar() {
         <>
             <div className={`side-navbar ${show ? 'active-nav' : ''}`} id="sidebar">
                 <ul className="nav flex-column text-white w-100 p-8">
-                    <span className="nav-link h3 text-black mt-4 mb-0 fw-bold fs-2 pb-0 text-center italic-text">ECOGEST</span>
+                    <span className="nav-link h3 text-black mt-4 mb-0 fw-bold fs-2 pb-0 text-center italic-text text-shadow">ECOGEST</span>
                     <span className="nav-link h1 text-black my-0 pt-0 text-center">Inovando o Presente, Preservando o Futuro</span>
                     <li className="nav-link px-2 py-3">
                         <Link to="/Componentes">
