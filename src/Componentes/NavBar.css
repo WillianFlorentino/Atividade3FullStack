@@ -54,10 +54,11 @@
 }
 
 .text-shadow {
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.6);
 }
 
 .main-container {
     max-width: 97%;
     margin-left: 20px;
 }
+

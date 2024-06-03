@@ -361,7 +361,7 @@ function FormColab() {
 
 
         <>
-            <Container className='form-colab'>
+            <Container className='form-colab bg-white p-0 rounded shadow w-100' style={{ minHeight: '90vh' }}>
                 <h2 className="text-center mb-4"><FaListAlt /> CADASTRO DE COLABORADORES</h2>
                 <Col class="card borda">
                     <h5 class="card-header">Informações Pessoais</h5>
@@ -545,7 +545,7 @@ function FormColab() {
                                 </Col>
                                 <Col lg='3'>
                                     <Form.Group controlId='escolaridade'>
-                                        <Col className="mb-3 mt-4">
+                                        <Col className="mb-3 mt-3">
                                             <Form.Label>Nível de Escolaridade</Form.Label>
                                             <Form.Select required className="form-select"
                                                 onChange={handleNivelEscolaridadeChange}

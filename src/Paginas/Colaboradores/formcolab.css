@@ -11,22 +11,22 @@
 .custom-table-container {
     margin-bottom: 20px;
     width: 100%;
-    overflow-x: hidden; /* Evitar rolagem horizontal */
+    overflow-x: auto; 
 }
 
 .custom-table {
     border: 1px solid black;
     border-collapse: collapse;
     width: 100%;
-    table-layout: auto; /* Permitir que a tabela ajuste automaticamente a largura das colunas */
+    table-layout: auto; 
 }
 
 .custom-table th, .custom-table td {
     border: 1px solid black;
-    padding: 4px; /* Reduzir padding */
+    padding: 4px;
     text-align: center;
-    white-space: nowrap; /* Evitar quebra de linha */
-    font-size: 0.85em; /* Reduzir tamanho da fonte */
+    white-space: nowrap;
+    font-size: 0.85em;
 }
 
 .custom-table .w-5 {
@@ -62,12 +62,8 @@
     background-color: #006400;
 }
 
-
-
-
-  .pesquise-label {
+.pesquise-label {
     font-weight: bold;
     margin-right: 10px;
     font-size: 1.7em; 
-  }
-
+}

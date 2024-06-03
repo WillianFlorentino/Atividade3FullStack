@@ -1,22 +1,6 @@
 import { useEffect, useState } from "react";
-import {
-  Container,
-  Card,
-  Row,
-  Col,
-  Table,
-  Form,
-  Button,
-  InputGroup,
-} from "react-bootstrap";
-import {
-  FaListAlt,
-  FaEdit,
-  FaSearch,
-  FaBackspace,
-  FaTrashAlt,
-  FaList,
-} from "react-icons/fa";
+import { Container, Card, Row, Col, Table, Form, Button, InputGroup, } from "react-bootstrap";
+import { FaListAlt, FaEdit, FaSearch, FaBackspace, FaTrashAlt, FaList, } from "react-icons/fa";
 import BeneficiariosForm from "./BeneficiariosForm";
 import BeneficiarioService from "../../services/BeneficiarioService";
 
@@ -78,12 +62,12 @@ function Beneficiarios() {
 
   return (
     <>
-      <h2 className="text-center mt-4">
-        <FaListAlt /> Gerenciar Beneficiários
+      <h2 className="text-center">
+        <FaListAlt /> CADASTRO DE BENEFICIÁRIOS
       </h2>
       <Container>
         <Card>
-          <Card.Header>Cadastro Beneficiários</Card.Header>
+          <Card.Header as="h4">Informações Pessoais:</Card.Header>
           <Card.Body>
             <Row>
               <Col>
@@ -97,9 +81,9 @@ function Beneficiarios() {
         </Card>
       </Container>
       <hr />
-      <h3 className="text-center">Beneficiários Cadastrados</h3>
+      <h3 className="text-center mt-4">Beneficiários Cadastrados</h3>
       
-      <Container>
+      <Container className="mt-3">
         <Form className="d-flex justify-content-center mb-3">
           <InputGroup>
             <Form.Control
@@ -108,9 +92,10 @@ function Beneficiarios() {
               value={searchName}
               onChange={(e) => setSearchName(e.target.value)}
             />
-            <Button variant="primary" onClick={handleFiltrar}>
-              <FaSearch /> Pesquisar
-            </Button>
+            <Button variant="outline-secondary" onClick={handleFiltrar} disabled>
+  <FaSearch style={{ color: "#666666" }} />
+</Button>
+
             <Button variant="secondary" onClick={() => setSearchName("")}>
               <FaBackspace /> Limpar
             </Button>

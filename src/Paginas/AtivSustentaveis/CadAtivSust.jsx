@@ -10,9 +10,9 @@ function CadAtivSust() {
     const [listaAtividades, setListaAtividades] = useState(null);
     const [sucessoMensagem, setSucessoMensagem] = useState('');
     const [editandoAtividade, setEditandoAtividade] = useState(null);
-    const [setErro] = useState('');
+    const [erro, setErro] = useState('');
     const navigate = useNavigate();
-    const [validated] = useState(false);
+    const [validated, setValidated] = useState(false);
     const [nome, setNome] = useState('');
     const [errors, setErrors] = useState({});
     const [termoBusca, setTermoBusca] = useState('');
@@ -126,7 +126,7 @@ function CadAtivSust() {
         setNome('');
         setEditandoAtividade(null);
         setErro('');
-        navigate('/AtivSustentaveis'); 
+        navigate('/AtivSustentaveis');
     };
 
     return (

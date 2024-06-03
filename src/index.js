@@ -4,11 +4,9 @@ import {RouterProvider, createBrowserRouter} from 'react-router-dom';
 import './index.css';
 import App from './App';
 import CadAtivSust from './Paginas/AtivSustentaveis/CadAtivSust';
-import AgendarServicos from './Paginas/Agendar/AgendarServicos';
-import VisualizarAgendamentos from './Paginas/Agendar/VisualizarAgendamentos';
-import PersonalizarAgendamentos from './Paginas/Agendar/PersonalizarAgendamentos';
 import Beneficiarios from './Paginas/Beneficiarios/Beneficiarios';
 import FormColab from './Paginas/Colaboradores/FormColab';
+import Maquinario from './Paginas/Maquinario/Maquinario';
 import reportWebVitals from './reportWebVitals';
 import NavBar from './Componentes/NavBar';
 import Home from './Componentes/Home';
@@ -45,7 +43,7 @@ const router = createBrowserRouter(
         },
 
         {
-          path:'/Colaboradores',
+          path:'/Colaborador',
           element:<FormColab></FormColab>
         },
         {         
@@ -53,16 +51,8 @@ const router = createBrowserRouter(
           element:<FormColab></FormColab>       
         },
         {
-          path: '/AgendarServicos',
-          element: <AgendarServicos></AgendarServicos>
-        },
-        {
-          path: '/VisualizarAgendamentos',
-          element: <VisualizarAgendamentos></VisualizarAgendamentos>
-        },
-        {
-          path: '/PersonalizarAgendamentos',
-          element: <PersonalizarAgendamentos></PersonalizarAgendamentos>
+          path: '/Maquinario',
+          element: <Maquinario></Maquinario>
         }
       ]
     }

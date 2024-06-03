@@ -34,12 +34,42 @@ const BeneficiariosForm = ({ selectedBeneficiary, onFormSubmit }) => {
     setFormData({ ...formData, datanascimento: date });
   };
 
-  const handleSubmit = async (event, action) => {
-    const form = event.currentTarget;
-    event.preventDefault();
+  const handleKeyDown = (event) => {
+    const allowedKeys = ["Backspace", "ArrowLeft", "ArrowRight", "/"];
+    if (!allowedKeys.includes(event.key) && isNaN(Number(event.key))) {
+      event.preventDefault();
+    }
+  };
 
-    if (form.checkValidity() === false) {
-      event.stopPropagation();
+  const isFormValid = () => {
+    const {
+      nome,
+      cpf,
+      contato,
+      email,
+      endereco,
+      bairro,
+      numero,
+      datanascimento,
+    } = formData;
+
+    return (
+      nome !== "" &&
+      cpf !== "" &&
+      contato !== "" &&
+      email !== "" &&
+      endereco !== "" &&
+      bairro !== "" &&
+      numero !== "" &&
+      datanascimento !== null
+    );
+  };
+
+  const handleSubmit = async (event, action) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (!isFormValid()) {
       setErrorMessage("Por favor, preencha todos os campos obrigatórios.");
       setValidated(true);
       setTimeout(() => setErrorMessage(""), 3000);
@@ -48,12 +78,7 @@ const BeneficiariosForm = ({ selectedBeneficiary, onFormSubmit }) => {
         if (action === "Cadastrar") {
           await beneficiarioService.adicionarBeneficiario(formData);
         } else if (action === "Atualizar") {
-          await beneficiarioService.atualizarBeneficiario(
-            formData.id,
-            formData
-          );
-        } else if (action === "Excluir") {
-          await beneficiarioService.deletarBeneficiario(formData.id);
+          await beneficiarioService.atualizarBeneficiario(formData.id, formData);
         }
         setSuccessMessage(`${action} realizado com sucesso!`);
         setValidated(true);
@@ -70,11 +95,7 @@ const BeneficiariosForm = ({ selectedBeneficiary, onFormSubmit }) => {
 
   return (
     <div className="container-fluid mt-3">
-      <Form
-        noValidate
-        validated={validated}
-        onSubmit={(e) => handleSubmit(e, "")}
-      >
+      <Form noValidate validated={validated}>
         <Row className="mb-3 justify-content-center">
           <Form.Group as={Col} xs={12} md={1} controlId="validationCustom01">
             <Form.Label>ID</Form.Label>
@@ -212,9 +233,7 @@ const BeneficiariosForm = ({ selectedBeneficiary, onFormSubmit }) => {
               mask="99999"
               maskChar="_"
               value={formData.numero}
-              onChange={(e) =>
-                setFormData({ ...formData, numero: e.target.value })
-              }
+              onChange={(e) => setFormData({ ...formData, numero: e.target.value })}
             >
               {(inputProps) => (
                 <Form.Control
@@ -222,6 +241,7 @@ const BeneficiariosForm = ({ selectedBeneficiary, onFormSubmit }) => {
                   type="text"
                   placeholder="Número"
                   required
+                  autocomplete="off"
                 />
               )}
             </InputMask>
@@ -235,13 +255,14 @@ const BeneficiariosForm = ({ selectedBeneficiary, onFormSubmit }) => {
               selected={formData.datanascimento}
               onChange={handleDataNascimentoChange}
               dateFormat="dd/MM/yyyy"
+              onKeyDown={handleKeyDown}
               placeholderText="DD/MM/AAAA"
               showYearDropdown
               scrollableYearDropdown
               yearDropdownItemNumber={100}
               className="form-control"
-              
               required
+              autocomplete="off"
             />
             <Form.Control.Feedback type="invalid">
               Por favor, insira uma data de nascimento válida.
@@ -256,25 +277,26 @@ const BeneficiariosForm = ({ selectedBeneficiary, onFormSubmit }) => {
             feedbackType="invalid"
           />
         </Form.Group>
-        <div className="d-grid gap-2 d-md-flex justify-content-md-center py-4">
+        <div className="d-grid gap-2 d-md-flex justify-content-md-center py-5">
           <Button
-            type="submit"
+            type="button"
             variant="success"
             className="me-md-2"
             onClick={(e) => handleSubmit(e, "Cadastrar")}
+            disabled={!isFormValid()}
           >
             Cadastrar
           </Button>
           <Button
-            type="submit"
+            type="button"
             variant="warning"
             className="me-md-2"
             onClick={(e) => handleSubmit(e, "Atualizar")}
+            disabled={!isFormValid()}
           >
             Atualizar
           </Button>
         </div>
-        
       </Form>
       {errorMessage && (
         <Alert variant="danger" className="mt-3">
