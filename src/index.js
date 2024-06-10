@@ -47,12 +47,16 @@ const router = createBrowserRouter(
           element:<FormColab></FormColab>
         },
         {         
-          path:'/colaboradores/:idColaborador',
+          path:'/colaborador/:idColaborador',
           element:<FormColab></FormColab>       
         },
         {
           path: '/Maquinario',
           element: <Maquinario></Maquinario>
+        },
+        {         
+          path:'/maquinario/:idMaquinario',
+          element:<Maquinario></Maquinario>       
         }
       ]
     }

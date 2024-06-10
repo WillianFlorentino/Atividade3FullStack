@@ -5,7 +5,7 @@ import { FaPlus, FaSave} from 'react-icons/fa';
 const BtnCadastrar = ({ editandoAtividade, handleSalvar }) => {
     return (
         <>
-            <Button type='submit' className='btn w-100' variant='primary' onClick={handleSalvar}>
+            <Button type='submit' className='btn w-100' variant='success' onClick={handleSalvar}>
                 {editandoAtividade ? <><FaSave /> Salvar</> : <><FaPlus /> Cadastrar</>}
             </Button>
         </>

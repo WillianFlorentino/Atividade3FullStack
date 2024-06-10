@@ -1,8 +1,25 @@
 import { useEffect, useState } from "react";
-import { Container, Card, Row, Col, Table, Form, Button, InputGroup, } from "react-bootstrap";
-import { FaListAlt, FaEdit, FaSearch, FaBackspace, FaTrashAlt, FaList, } from "react-icons/fa";
+import {
+  Container,
+  Card,
+  Row,
+  Col,
+  Table,
+  Form,
+  Button,
+  InputGroup,
+} from "react-bootstrap";
+import {
+  FaListAlt,
+  FaEdit,
+  FaSearch,
+  FaBackspace,
+  FaTrashAlt,
+  FaList,
+} from "react-icons/fa";
 import BeneficiariosForm from "./BeneficiariosForm";
 import BeneficiarioService from "../../services/BeneficiarioService";
+import "./Beneficiarios.css";
 
 const beneficiarioService = new BeneficiarioService();
 
@@ -82,7 +99,7 @@ function Beneficiarios() {
       </Container>
       <hr />
       <h3 className="text-center mt-4">Beneficiários Cadastrados</h3>
-      
+
       <Container className="mt-3">
         <Form className="d-flex justify-content-center mb-3">
           <InputGroup>
@@ -91,10 +108,15 @@ function Beneficiarios() {
               placeholder="Pesquisar por nome"
               value={searchName}
               onChange={(e) => setSearchName(e.target.value)}
+              className="dark-gray-border"
             />
-            <Button variant="outline-secondary" onClick={handleFiltrar} disabled>
-  <FaSearch style={{ color: "#666666" }} />
-</Button>
+            <Button
+              variant="outline-secondary"
+              onClick={handleFiltrar}
+              disabled
+            >
+              <FaSearch style={{ color: "#666666" }} />
+            </Button>
 
             <Button variant="secondary" onClick={() => setSearchName("")}>
               <FaBackspace /> Limpar
@@ -105,16 +127,21 @@ function Beneficiarios() {
           </InputGroup>
         </Form>
         {mostrarTabela && (
-          <Table striped bordered hover className="mt-3">
+          <Table
+            striped
+            bordered
+            hover
+            className="mt-3 dark-gray-bordered-table"
+          >
             <thead>
               <tr>
-                <th>ID</th>
-                <th>Nome</th>
-                <th>CPF</th>
-                <th>Contato</th>
-                <th>E-mail</th>
-                <th>Endereço</th>
-                <th>Bairro</th>
+                <th className="text-center">ID</th>
+                <th className="text-center">Nome</th>
+                <th className="text-center">CPF</th>
+                <th className="text-center">Contato</th>
+                <th className="text-center">E-mail</th>
+                <th className="text-center">Endereço</th>
+                <th className="text-center">Bairro</th>
                 <th className="text-center">Número</th>
                 <th className="text-center">Data de Nascimento</th>
                 <th className="text-center">Ações</th>
