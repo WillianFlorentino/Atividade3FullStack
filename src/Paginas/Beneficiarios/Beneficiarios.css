@@ -7,8 +7,15 @@ body {
     -moz-osx-font-smoothing: grayscale;
   }
   
-  code {
-    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-      monospace;
+  .dark-gray-bordered-table {
+    border: 1px solid #272626e0;
+  }
+  
+  .dark-gray-bordered-table th,
+  .dark-gray-bordered-table td {
+    border: 1px solid #272626e0;
   }
 
+  .dark-gray-border {
+    border-color: #272626e0 !important;
+  }

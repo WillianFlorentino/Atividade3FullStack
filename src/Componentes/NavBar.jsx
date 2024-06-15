@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './NavBar.css';
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import { FaClipboard, FaClipboardList, FaRegUser, FaUserPlus, FaBars, FaHome, FaTractor } from 'react-icons/fa';
+import { FaClipboardList, FaRegUser, FaUserPlus, FaBars, FaHome, FaTractor, FaCogs } from 'react-icons/fa';
 import { Container } from 'react-bootstrap';
 import Footer from '../Componentes/Footer.jsx';
 
@@ -38,6 +38,12 @@ function NavBar() {
                         </Link>
                     </li>
                     <li className="nav-link px-2 py-3">
+                        <Link to="/TiposDeServico">
+                            <FaCogs />
+                            <span className="mx-2">Cadastrar Tipos de Serviços</span>
+                        </Link>
+                    </li>
+                    <li className="nav-link px-2 py-3">
                         <Link to="/Beneficiarios">
                             <FaRegUser />
                             <span className="mx-2">Cadastro de Beneficiarios</span>
@@ -55,6 +61,7 @@ function NavBar() {
                             <span className="mx-2">Cadastro de Maquinário</span>
                         </Link>
                     </li>
+
                 </ul>
             </div>
 

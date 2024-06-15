@@ -4,6 +4,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import BeneficiarioService from "../../services/BeneficiarioService";
 import InputMask from "react-input-mask";
+import "./Beneficiarios.css"; 
 
 const beneficiarioService = new BeneficiarioService();
 
@@ -102,7 +103,7 @@ const BeneficiariosForm = ({ selectedBeneficiary, onFormSubmit }) => {
             <Col className="input-group mb-3">
               <Form.Control
                 type="text"
-                className="form-control"
+                className="form-control dark-gray-border"
                 placeholder="ID"
                 aria-label="ID"
                 aria-describedby="basic-addon2"
@@ -120,6 +121,7 @@ const BeneficiariosForm = ({ selectedBeneficiary, onFormSubmit }) => {
               required
               type="text"
               placeholder="Nome"
+              className="dark-gray-border"
               value={formData.nome}
               onChange={(e) =>
                 setFormData({ ...formData, nome: e.target.value })
@@ -149,6 +151,7 @@ const BeneficiariosForm = ({ selectedBeneficiary, onFormSubmit }) => {
                   {...inputProps}
                   type="text"
                   placeholder="CPF"
+                  className="dark-gray-border"
                   required
                 />
               )}
@@ -172,6 +175,7 @@ const BeneficiariosForm = ({ selectedBeneficiary, onFormSubmit }) => {
                   {...inputProps}
                   type="text"
                   placeholder="(xx)xxxxx-xxxx)"
+                  className="dark-gray-border"
                   required
                 />
               )}
@@ -185,6 +189,7 @@ const BeneficiariosForm = ({ selectedBeneficiary, onFormSubmit }) => {
             <Form.Control
               type="email"
               placeholder="E-mail"
+              className="dark-gray-border"
               value={formData.email}
               onChange={(e) =>
                 setFormData({ ...formData, email: e.target.value })
@@ -202,6 +207,7 @@ const BeneficiariosForm = ({ selectedBeneficiary, onFormSubmit }) => {
             <Form.Control
               type="text"
               placeholder="Endereço"
+              className="dark-gray-border"
               value={formData.endereco}
               onChange={(e) =>
                 setFormData({ ...formData, endereco: e.target.value })
@@ -217,6 +223,7 @@ const BeneficiariosForm = ({ selectedBeneficiary, onFormSubmit }) => {
             <Form.Control
               type="text"
               placeholder="Bairro"
+              className="dark-gray-border"
               value={formData.bairro}
               onChange={(e) =>
                 setFormData({ ...formData, bairro: e.target.value })
@@ -231,7 +238,7 @@ const BeneficiariosForm = ({ selectedBeneficiary, onFormSubmit }) => {
             <Form.Label>Número</Form.Label>
             <InputMask
               mask="99999"
-              maskChar="_"
+              maskChar=""
               value={formData.numero}
               onChange={(e) => setFormData({ ...formData, numero: e.target.value })}
             >
@@ -240,8 +247,8 @@ const BeneficiariosForm = ({ selectedBeneficiary, onFormSubmit }) => {
                   {...inputProps}
                   type="text"
                   placeholder="Número"
+                  className="dark-gray-border"
                   required
-                  autocomplete="off"
                 />
               )}
             </InputMask>
@@ -260,9 +267,8 @@ const BeneficiariosForm = ({ selectedBeneficiary, onFormSubmit }) => {
               showYearDropdown
               scrollableYearDropdown
               yearDropdownItemNumber={100}
-              className="form-control"
+              className="form-control dark-gray-border"
               required
-              autocomplete="off"
             />
             <Form.Control.Feedback type="invalid">
               Por favor, insira uma data de nascimento válida.
@@ -275,6 +281,7 @@ const BeneficiariosForm = ({ selectedBeneficiary, onFormSubmit }) => {
             label="Concordo com os termos e condições"
             feedback="Você deve concordar antes de enviar."
             feedbackType="invalid"
+            className="dark-gray-border"
           />
         </Form.Group>
         <div className="d-grid gap-2 d-md-flex justify-content-md-center py-5">

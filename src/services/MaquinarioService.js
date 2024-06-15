@@ -54,7 +54,7 @@ class MaquinarioService {
 
     async atualizar(idMaquinario, maquinarioDados) {
         try {
-            const response = await fetch(`${API_BASE_URL}/colaborador/${idMaquinario}`, {
+            const response = await fetch(`${API_BASE_URL}/maquinario/${idMaquinario}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'

@@ -10,6 +10,7 @@ import Maquinario from './Paginas/Maquinario/Maquinario';
 import reportWebVitals from './reportWebVitals';
 import NavBar from './Componentes/NavBar';
 import Home from './Componentes/Home';
+import CadTiposServ from './Paginas/TiposDeServico/CadTiposServ';
 
 const router = createBrowserRouter(
   [
@@ -47,12 +48,24 @@ const router = createBrowserRouter(
           element:<FormColab></FormColab>
         },
         {         
-          path:'/colaboradores/:idColaborador',
+          path:'/colaborador/:idColaborador',
           element:<FormColab></FormColab>       
         },
         {
           path: '/Maquinario',
           element: <Maquinario></Maquinario>
+        },
+        {         
+          path:'/maquinario/:idMaquinario',
+          element:<Maquinario></Maquinario>       
+        },
+        {         
+          path:'/TiposDeServico',
+          element:<CadTiposServ></CadTiposServ>     
+        },
+        {         
+          path:'/TiposDeServico/:idServico',
+          element:<CadTiposServ></CadTiposServ>     
         }
       ]
     }
