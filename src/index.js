@@ -49,6 +49,7 @@ const router = createBrowserRouter(
         },
         {         
           path:'/colaborador/:idColaborador',
+          path:'/colaborador/:idColaborador',
           element:<FormColab></FormColab>       
         },
         {

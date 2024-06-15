@@ -19,13 +19,8 @@ const BtnCadastrar = ({ editandoAtividade, editandoServico, handleSalvar }) => {
 
     return (
         <>
-            <Button
-                type='submit'
-                className='btn w-100'
-                variant={botaoAmarelo ? 'warning' : (editandoAtividade || editandoServico) ? 'warning' : 'success'}
-                onClick={handleClick}
-            >
-                {editandoAtividade || editandoServico ? <><FaSave /> Atualizar</> : <><FaPlus /> Cadastrar</>}
+            <Button type='submit' className='btn w-100' variant='primary' onClick={handleSalvar}>
+                {editandoAtividade ? <><FaSave /> Salvar</> : <><FaPlus /> Cadastrar</>}
             </Button>
         </>
     );
