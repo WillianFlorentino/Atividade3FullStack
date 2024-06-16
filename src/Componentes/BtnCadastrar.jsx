@@ -6,11 +6,15 @@ const BtnCadastrar = ({ editandoAtividade, editandoServico, handleSalvar }) => {
     const [botaoAmarelo, setBotaoAmarelo] = useState(false);
 
     const handleClick = () => {
-        setBotaoAmarelo(true);
-        handleSalvar();
-        setTimeout(() => {
-            setBotaoAmarelo(false);
-        }, 300); // Volta para a cor verde depois de 300ms
+        if (typeof handleSalvar === 'function') {
+            setBotaoAmarelo(true);
+            handleSalvar();
+            setTimeout(() => {
+                setBotaoAmarelo(false);
+            }, 300); // Volta para a cor verde depois de 300ms
+        } else {
+            console.error('handleSalvar is not a function');
+        }
     };
 
     return (
