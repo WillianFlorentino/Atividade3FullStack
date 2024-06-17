@@ -43,7 +43,7 @@ class BeneficiarioService {
 
       if (!response.ok) {
         console.log("Ocorreu um erro ao adicionar o beneficiário");
-        throw new Error("Erro ao cadastrar beneficiário");
+        throw new Error("CPF já cadastrado. Tente outro CPF.");
       }
     } catch (error) {
       throw error;
@@ -108,7 +108,26 @@ class BeneficiarioService {
       return dados;
     }
   }
+
+  async verificarExistenciaCPF(cpf) {
+    const response = await fetch(`${API_BASE_URL}/beneficiarios/cpf/${cpf}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  
+    if (!response.ok) {
+      console.log("Ocorreu um erro ao verificar o CPF");
+      throw new Error("Erro ao verificar CPF");
+    }
+    const data = await response.json();
+    return data.exists;
+  }
+  
 }
+
+
 
 export default BeneficiarioService;
 

@@ -1,6 +1,6 @@
 const API_BASE_URL = "http://localhost:3001";
-
 class ServicoService {
+    
     async obterTodos() {
         const response = await fetch(`${API_BASE_URL}/servico`, {
             headers: {
@@ -15,7 +15,6 @@ class ServicoService {
             return dados;
         }
     }
-
     async adicionar(servicoDados) {
 
         try {

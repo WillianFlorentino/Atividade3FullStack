@@ -4,7 +4,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import BeneficiarioService from "../../services/BeneficiarioService";
 import InputMask from "react-input-mask";
-import "./Beneficiarios.css"; 
+import "./Beneficiarios.css";
 
 const beneficiarioService = new BeneficiarioService();
 
@@ -66,6 +66,21 @@ const BeneficiariosForm = ({ selectedBeneficiary, onFormSubmit }) => {
     );
   };
 
+  const resetForm = () => {
+    setFormData({
+      id: "",
+      nome: "",
+      cpf: "",
+      contato: "",
+      email: "",
+      endereco: "",
+      bairro: "",
+      numero: "",
+      datanascimento: null,
+    });
+    setValidated(false);
+  };
+
   const handleSubmit = async (event, action) => {
     event.preventDefault();
     event.stopPropagation();
@@ -79,7 +94,10 @@ const BeneficiariosForm = ({ selectedBeneficiary, onFormSubmit }) => {
         if (action === "Cadastrar") {
           await beneficiarioService.adicionarBeneficiario(formData);
         } else if (action === "Atualizar") {
-          await beneficiarioService.atualizarBeneficiario(formData.id, formData);
+          await beneficiarioService.atualizarBeneficiario(
+            formData.id,
+            formData
+          );
         }
         setSuccessMessage(`${action} realizado com sucesso!`);
         setValidated(true);
@@ -87,6 +105,7 @@ const BeneficiariosForm = ({ selectedBeneficiary, onFormSubmit }) => {
         if (onFormSubmit) {
           onFormSubmit();
         }
+        resetForm();
       } catch (error) {
         setErrorMessage(`Erro ao ${action.toLowerCase()}: ${error.message}`);
         setTimeout(() => setErrorMessage(""), 3000);
@@ -240,7 +259,9 @@ const BeneficiariosForm = ({ selectedBeneficiary, onFormSubmit }) => {
               mask="99999"
               maskChar=""
               value={formData.numero}
-              onChange={(e) => setFormData({ ...formData, numero: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, numero: e.target.value })
+              }
             >
               {(inputProps) => (
                 <Form.Control
@@ -290,7 +311,6 @@ const BeneficiariosForm = ({ selectedBeneficiary, onFormSubmit }) => {
             variant="success"
             className="me-md-2"
             onClick={(e) => handleSubmit(e, "Cadastrar")}
-            disabled={!isFormValid()}
           >
             Cadastrar
           </Button>

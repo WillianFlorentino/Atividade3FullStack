@@ -11,6 +11,7 @@ import reportWebVitals from './reportWebVitals';
 import NavBar from './Componentes/NavBar';
 import Home from './Componentes/Home';
 import CadTiposServ from './Paginas/TiposDeServico/CadTiposServ';
+import CadTipoMaq from './Paginas/TipoMaquinario/CadTipoMaq';
 
 const router = createBrowserRouter(
   [
@@ -49,8 +50,15 @@ const router = createBrowserRouter(
         },
         {         
           path:'/colaborador/:idColaborador',
-          path:'/colaborador/:idColaborador',
           element:<FormColab></FormColab>       
+        },
+        {
+          path: '/TiposDeMaquinario',
+          element: <CadTipoMaq></CadTipoMaq>
+        },
+        {         
+          path:'/TiposDeMaquinario/:idTiposDeMaquinario',
+          element:<CadTipoMaq></CadTipoMaq>       
         },
         {
           path: '/Maquinario',

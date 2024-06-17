@@ -9,6 +9,9 @@ import './formcolab.css'
 import ColaboradorService from '../../services/ColaboradorService';
 
 
+   
+
+
 const colaboradorService = new ColaboradorService();
 
 function FormColab() {
@@ -27,7 +30,7 @@ function FormColab() {
     const [nivelEscolaridade, setNivelEscolaridade] = useState("");
     const { idColaborador } = useParams();
     const navigate = useNavigate();
-
+    const [erroMensagem, setErroMensagem] = useState("");
     const [errors, setErrors] = useState({});
 
     const [listaColaboradores, setListaColaboradores] = useState([]);
@@ -249,7 +252,10 @@ function FormColab() {
     };
 
 
+    
 
+
+  
     async function handleSalvar(event) {
         event.preventDefault();
         const form = event.currentTarget;
@@ -279,7 +285,7 @@ function FormColab() {
         if (!numero) {
             newErros.numero = 'O campo não pode estar vazio.';
         } else if (numero.length > 6) {
-            newErros.numero = 'O campo não aceita mais de 5 digitos.';
+            newErros.numero = 'O campo não aceita mais de 5 dígitos.';
         }
     
         if (!cpf) {
@@ -324,36 +330,42 @@ function FormColab() {
                 email: email,
             }
     
-            if (idColaborador === undefined) {
-                await colaboradorService.adicionar(colaborador);
-                setSucessoMensagem('Colaborador Cadastrado com Sucesso!');
-                carregarColaboradores();
-            } else {
-                await colaboradorService.atualizar(idColaborador, colaborador);
-                setSucessoMensagem('Colaborador Atualizado com Sucesso!');
+            try {
+                if (idColaborador === undefined) {
+                    await colaboradorService.adicionar(colaborador);
+                    setSucessoMensagem('Colaborador Cadastrado com Sucesso!');
+                    carregarColaboradores();
+                } else {
+                    await colaboradorService.atualizar(idColaborador, colaborador);
+                    setSucessoMensagem('Colaborador Atualizado com Sucesso!');
+                    setValidated(false);
+                }
+    
+                form.reset(); 
+                setNome('');
+                setBairro('');
+                setEndereco('');
+                setCargo('');
+                setContato('');
+                setCpf('');
+                setNivelEscolaridade('');
+                setDataNascimento('');
+                setEmail('');
+                setNumero('');
                 setValidated(false);
+    
+                setTimeout(() => {
+                    setSucessoMensagem('');
+                    setErrors({});
+                    navigate('/colaborador');
+                }, 3000);
+            } catch (error) {
+                setErroMensagem('Erro ao cadastrar: CPF já cadastrado. Tente outro CPF.');
+                setTimeout(() => setErroMensagem(''), 3000); 
             }
-    
-            form.reset(); 
-            setNome('');
-            setBairro('');
-            setEndereco('');
-            setCargo('');
-            setContato('');
-            setCpf('');
-            setNivelEscolaridade('');
-            setDataNascimento('');
-            setEmail('');
-            setNumero('');
-            setValidated(false);
-    
-            setTimeout(() => {
-                setSucessoMensagem('');
-                setErrors({});
-                navigate('/colaborador');
-            }, 3000);
         }
     }
+    
     
 
 
@@ -443,6 +455,8 @@ function FormColab() {
                                     </Form.Group>
                                 </Col>
                             </Row>
+
+                            
 
                             <Row>
                                 <Col lg="4" className='mt-3'>
@@ -586,6 +600,10 @@ function FormColab() {
                                 </Col>
                                 <Alert className="alert-success-custom" variant='sucess' show={sucessoMensagem !== ""}> <b> <FaCheckCircle></FaCheckCircle> </b>{sucessoMensagem}</Alert>
 
+                                <div>
+                        {/* Renderize o Alert dentro do componente Form, após os campos de entrada */}
+                        {erroMensagem && <Alert variant="danger">{erroMensagem}</Alert>}
+                    </div>
                             </Row>
 
                             <hr /> { }
@@ -602,7 +620,7 @@ function FormColab() {
                     </Col>
                 </Col>
 
-
+                <h3 className="text-center mt-5 mb-1">Colaboradores Cadastrados</h3>
 
                 <Container className="custom-table-container mx-0">
                     <Col>
@@ -657,6 +675,7 @@ function FormColab() {
                                                     <Button variant="link" onClick={() => handleExcluir(colaborador.id)} className='text-danger fs-5'>
                                                         <FaTrash />
                                                     </Button>
+                                                    
                                                 </div>
                                             </td>
                                         </tr>

@@ -13,7 +13,6 @@ import {
   FaListAlt,
   FaEdit,
   FaSearch,
-  FaBackspace,
   FaTrashAlt,
   FaList,
 } from "react-icons/fa";
@@ -40,6 +39,8 @@ function Beneficiarios() {
     } else {
       dados = await beneficiarioService.obterTodosBeneficiarios();
     }
+    // Ordenar os dados por nome
+    dados.sort((a, b) => a.nome.localeCompare(b.nome));
     setListaBeneficiarios(dados);
   };
 
@@ -100,8 +101,8 @@ function Beneficiarios() {
       <hr />
       <h3 className="text-center mt-4">Beneficiários Cadastrados</h3>
 
-      <Container className="mt-3">
-        <Form className="d-flex justify-content-center mb-3">
+      <Container className="mt-4">
+        <Form className="d-flex justify-content-center mb-4">
           <InputGroup>
             <Form.Control
               type="text"
@@ -113,16 +114,13 @@ function Beneficiarios() {
             <Button
               variant="outline-secondary"
               onClick={handleFiltrar}
-              disabled
+              disabled={searchName === ""}
             >
               <FaSearch style={{ color: "#666666" }} />
             </Button>
-
-            <Button variant="secondary" onClick={() => setSearchName("")}>
-              <FaBackspace /> Limpar
-            </Button>
+            
             <Button variant="secondary" onClick={handleListarTodos}>
-              <FaList /> ListarTodos
+              <FaList /> Listar Todos
             </Button>
           </InputGroup>
         </Form>
@@ -131,7 +129,7 @@ function Beneficiarios() {
             striped
             bordered
             hover
-            className="mt-3 dark-gray-bordered-table"
+            className="mt-3 dark-gray-bordered-table small-font-table"
           >
             <thead>
               <tr>
@@ -150,7 +148,7 @@ function Beneficiarios() {
             <tbody>
               {filteredBeneficiaries.map((beneficiary, index) => (
                 <tr key={index}>
-                  <td>{beneficiary.id}</td>
+                  <td className="text-center">{beneficiary.id}</td>
                   <td>{beneficiary.nome}</td>
                   <td>{beneficiary.cpf}</td>
                   <td>{beneficiary.contato}</td>
