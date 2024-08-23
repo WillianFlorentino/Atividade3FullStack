@@ -16,7 +16,7 @@ function NavBar() {
     };
 
     React.useEffect(() => {
-        setIsHome(location.pathname === '/Componentes');
+        setIsHome(location.pathname === '/Componentes' || location.pathname === '/');
     }, [location.pathname]);
 
     return (
