@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './NavBar.css';
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import { FaClipboard, FaClipboardList, FaRegUser, FaUserPlus, FaBars, FaHome, FaTractor, FaCogs } from 'react-icons/fa';
+import { FaClipboardList, FaRegUser, FaUserPlus, FaBars, FaHome, FaTractor, FaCogs } from 'react-icons/fa';
 import { Container } from 'react-bootstrap';
 import Footer from '../Componentes/Footer.jsx';
 
