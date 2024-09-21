@@ -54,17 +54,11 @@ function Login() {
               onChange={(e) => setPassword(e.target.value)}
             />
             <FaLock onClick={togglePasswordVisibility} style={{ cursor: 'pointer' }} />
-          </div>
-          <div className="remember-forgot">
-            <label>
-              <input type="checkbox" /> Lembrar Senha
-            </label>
-            <a href="#">Forgot Password</a>
-          </div>
+          </div>        
           <button type="submit" className="btn">Login</button>
           <div className="register-link">
             <p>
-              Não tem uma conta? <a href="#">Crie uma conta</a>
+              Não tem uma conta? <a href="/register">Crie uma conta</a>
             </p>
           </div>
         </form>

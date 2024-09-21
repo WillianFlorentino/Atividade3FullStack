@@ -132,7 +132,7 @@ function CadAtivSust() {
     return (
         <>
             <div className="bg-white p-0 rounded shadow w-100" style={{ minHeight: '90vh' }}>
-                <h2 className="text-center mb-4"><FaListAlt /> CADASTRO DE ATIVIDADE SUSTENTÁVEL</h2>
+                <h2 className="text-center mb-4"><FaListAlt /> CADASTRO DE TIPO DE ATIVIDADE SUSTENTÁVEL</h2>
                 <Container className='mt-2'>
                     <Card>
                         <Card.Header as="h4">
