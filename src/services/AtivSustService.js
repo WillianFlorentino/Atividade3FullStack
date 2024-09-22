@@ -38,24 +38,29 @@ class AtivSustService {
     }
 
     async adicionar(atividadeDados) {
-
         try {
             const response = await fetch(`${API_BASE_URL}/criarativsust`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(atividadeDados)
-            })
+                body: JSON.stringify(atividadeDados) // Certifique-se de que atividadeDados tem o formato correto
+            });
     
             if (!response.ok) {
-                console.log('Erro ao adicionar!')
-                throw new Error('Erro ao adicionar atividade...')
+                const errorData = await response.json(); // Captura a resposta de erro do backend
+                console.log('Erro ao adicionar:', errorData);
+                throw new Error(`Erro ao adicionar atividade: ${errorData.message}`);
             }
+    
+            const dados = await response.json(); // Supondo que o backend retorna os dados da atividade criada
+            return dados; // Retorna os dados para uso posterior
         } catch (error) {
-            throw error;
+            console.error('Erro ao adicionar atividade:', error);
+            throw error; // Lança o erro para o frontend lidar com ele
         }
     }
+    
 
     async atualizar(idAtividade, atividadeDados) {
 
