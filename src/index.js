@@ -14,7 +14,10 @@ import CadTiposServ from './Paginas/TiposDeServico/CadTiposServ';
 import CadTipoMaq from './Paginas/TipoMaquinario/CadTipoMaq';
 import Login from './Componentes/Login';
 import Register from './Componentes/Register';
+import UpdateUserRole from './Componentes/atualizarrole';
 import ProtectedRoute from './Componentes/ProtectedRoute';
+import PrivateRoute from './Componentes/ProtectedRoute';
+
 
 const router = createBrowserRouter([
   {
@@ -26,59 +29,63 @@ const router = createBrowserRouter([
     element: <Register />, // Rota para o registro
   },
   {
+    path: '/update-role', // Rota para atualizar a role do usuário
+    element: <PrivateRoute roles={['admin']}> <UpdateUserRole />, </PrivateRoute> // Componente para atualizar a role
+  },
+  {
     element: <NavBar />, 
     children: [
       {
         path: '/Componentes',
-        element: <ProtectedRoute> <Home /> </ProtectedRoute>, // Rota protegida
+        element: <Home /> // Rota protegida
       },
       {
         path: '/AtivSustentaveis',
-        element: <ProtectedRoute> <CadAtivSust /> </ProtectedRoute>, // Rota protegida
+        element: <PrivateRoute roles={['admin', 'diretor']}> <CadAtivSust /> </PrivateRoute>, // Rota protegida
       },
       {
         path: '/CriarAtivSust',
-        element: <ProtectedRoute> <CriarAtivSust /> </ProtectedRoute>, // Rota protegida
+        element: <PrivateRoute roles={['admin', 'diretor', 'colaborador']}> <CriarAtivSust /> </PrivateRoute  >, // Rota protegida
       },
       {
         path: '/AtivSustentaveis/:idAtividade',
-        element: <ProtectedRoute> <CadAtivSust /> </ProtectedRoute>, // Rota protegida
+        element: <PrivateRoute roles={['admin', 'diretor']}> <CadAtivSust /> </PrivateRoute>, // Rota protegida
       },
       {
         path: '/Beneficiarios',
-        element: <ProtectedRoute> <Beneficiarios/> </ProtectedRoute>, // Rota protegida
+        element: <PrivateRoute roles={['admin', 'diretor']}> <Beneficiarios/> </PrivateRoute>, // Rota protegida
       },
       {
         path: '/Colaborador',
-        element: <ProtectedRoute> <FormColab/> </ProtectedRoute>, // Rota protegida
+        element: <PrivateRoute roles={['admin']}> <FormColab/> </PrivateRoute>, // Rota protegida
       },
       {
         path: '/colaborador/:idColaborador',
-        element: <ProtectedRoute> <FormColab /> </ProtectedRoute>, // Rota protegida
+        element: <PrivateRoute roles={['admin']}> <FormColab/> </PrivateRoute>, // Rota protegida
       },
       {
         path: '/TiposDeMaquinario',
-        element: <ProtectedRoute> <CadTipoMaq /> </ProtectedRoute>, // Rota protegida
+        element: <PrivateRoute roles={['admin']}> <CadTipoMaq /> </PrivateRoute>, // Rota protegida
       },
       {
         path: '/TiposDeMaquinario/:idTiposDeMaquinario',
-        element: <ProtectedRoute> <CadTipoMaq /> </ProtectedRoute>, // Rota protegida
+        element: <PrivateRoute roles={['admin']}> <CadTipoMaq /> </PrivateRoute>, // Rota protegida
       },
       {
         path: '/Maquinario',
-        element: <ProtectedRoute> <Maquinario /> </ProtectedRoute>, // Rota protegida
+        element: <PrivateRoute roles={['admin', 'diretor']}> <Maquinario /> </PrivateRoute>, // Rota protegida
       },
       {
         path: '/maquinario/:idMaquinario',
-        element: <ProtectedRoute> <Maquinario /> </ProtectedRoute>, // Rota protegida
+        element: <PrivateRoute roles={['admin', 'diretor']}> <Maquinario /> </PrivateRoute>, // Rota protegida
       },
       {
         path: '/TiposDeServico',
-        element: <ProtectedRoute> <CadTiposServ /> </ProtectedRoute>, // Rota protegida
+        element:  <PrivateRoute roles={['admin', 'diretor', 'colaborador']}> <CadTiposServ /> </PrivateRoute>, // Rota protegida
       },
       {
         path: '/TiposDeServico/:idServico',
-        element: <ProtectedRoute> <CadTiposServ /> </ProtectedRoute>, // Rota protegida
+        element: <PrivateRoute roles={['admin', 'diretor', 'colaborador']}> <CadTiposServ /> </PrivateRoute>, // Rota protegida
       },
     ],
   },

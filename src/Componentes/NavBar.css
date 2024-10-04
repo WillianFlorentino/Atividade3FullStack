@@ -62,3 +62,6 @@
     margin-left: 20px;
 }
 
+.user-info p {
+    color: black; /* Define a cor da fonte como preta */
+}

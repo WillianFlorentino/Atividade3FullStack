@@ -9,6 +9,24 @@ function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   const response = await fetch('http://localhost:3001/api/auth/login', {
+  //     method: 'POST',
+  //     headers: { 'Content-Type': 'application/json' },
+  //     body: JSON.stringify({ email: username, password })
+  //   });
+
+  //   const data = await response.json();
+
+  //   if (response.ok) {
+  //     localStorage.setItem('token', data.token);
+  //     navigate('/Componentes');
+  //   } else {
+  //     alert(data.message);
+  //   }
+  // };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const response = await fetch('http://localhost:3001/api/auth/login', {
@@ -16,14 +34,16 @@ function Login() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email: username, password })
     });
-
+  
     const data = await response.json();
-
+  
     if (response.ok) {
       localStorage.setItem('token', data.token);
+      localStorage.setItem('userEmail', data.user.email); // Armazenando o email do usuário
+      localStorage.setItem('userRole', data.user.role); // Armazenando o nível de acesso
       navigate('/Componentes');
     } else {
-      alert(data.message);
+      alert(data.error || data.message); // Alerta de erro
     }
   };
 
